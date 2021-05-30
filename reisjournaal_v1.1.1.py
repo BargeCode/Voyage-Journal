@@ -10,9 +10,6 @@ import time
 #numpad
 #save to CSV
 
-#test?
-
-
 def startStopSwitch(buttonName, distance, stamp1, stamp2):
     global start_time_var
     global button_list
