@@ -3,10 +3,18 @@ from tkinter import *
 from tkinter import ttk
 import time
 
-'version 1.1.1. first rework into tkinter'
-'GUI works'
-'Speed calculator works'
-'''to - do'''
+'''
+version 1.1.1
+
+additional info:
+Some dutch words are translated
+Kmr ### are the mile-markers, kilometer-markers along the river Rhine
+
+be kind, keep it simple because im not ready for __INIT__ stuff.
+No clue what that does.
+
+'''
+
 #numpad
 #save to CSV
 
@@ -54,55 +62,58 @@ root.title("Journaal")
 # Main Frame
 mainframe = ttk.Frame(root, padding="3 3 12 12")
 mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
-root.columnconfigure(0, weight=1, minsize=10)
-root.rowconfigure(0, weight=1, minsize=10)
+root.columnconfigure(0, weight=1, minsize=5)
+root.rowconfigure(0, weight=1, minsize=5)
 root.minsize(width=800, height=450)
 
+# voyage details frame
+voyage_labelFrame = ttk.Labelframe(mainframe, text='Reis gegevens') #Reis gegevens = Voyage Details
+voyage_labelFrame.grid(column=0, row=0, columnspan=1, rowspan=4)
 
 # speed table frame
-sector_labelFrame = ttk.Labelframe(mainframe, text='Rivier gedeelten')
-sector_labelFrame.grid(column=1, row=5, columnspan=5)
+sector_labelFrame = ttk.Labelframe(mainframe, text='Rivier gedeelten') #Rivier gedeelten = River sectors
+sector_labelFrame.grid(column=0, row=8, columnspan=5)
 
 # numpad frame
-numpad_labelFrame = ttk.Labelframe(mainframe, text='Toetsen')
-numpad_labelFrame.grid(column=6, row=2, rowspan=6)
+numpad_labelFrame = ttk.Labelframe(mainframe, text='Toetsen') # Toetsen = Buttons
+numpad_labelFrame.grid(column=6, row=0, rowspan=6)
 
 # Mainframe text
-'header'
-ttk.Label(mainframe, text="Reisgegevens").grid(column=1, row=0, sticky=(W, E))
-'sub header'
-ttk.Label(mainframe, text="Reisnummer #").grid(column=1, row=1, sticky=(W, E))
-ttk.Label(mainframe, text="Tonnage").grid(column=1, row=2, sticky=(W, E))
-ttk.Label(mainframe, text="Diepgang").grid(column=3, row=1, sticky=(W, E))
-ttk.Label(mainframe, text="Pegel Kaub").grid(column=3, row=2, sticky=(W, E))
+ttk.Label(voyage_labelFrame, text="Reisnummer #").grid(column=1, row=1, sticky=(W, E)) # Reisnummer = Voyage Number
+ttk.Label(voyage_labelFrame, text="Tonnage").grid(column=1, row=2, sticky=(W, E)) # Tonnage = Net Weight
+ttk.Label(voyage_labelFrame, text="Diepgang").grid(column=3, row=1, sticky=(W, E)) # Diepgang = Draught
+ttk.Label(voyage_labelFrame, text="Pegel Kaub").grid(column=3, row=2, sticky=(W, E)) # Pegel Kaub = River level at the town called Kaub
+ttk.Label(voyage_labelFrame, text="Gemiddelde snelheid:").grid(column=5, row=1, sticky=(W, E)) # Gemiddelde snelheid = Average speed
+average_voyage_speed = ttk.Label(voyage_labelFrame, text="speed")
+average_voyage_speed.grid(column=6, row=1, sticky=(W, E))
 
 # textboxes
 'voyage number'
 voyNumber = StringVar()
-voyNumber_Entry = ttk.Entry(mainframe, width=10, textvariable=voyNumber)
+voyNumber_Entry = ttk.Entry(voyage_labelFrame, width=10, textvariable=voyNumber)
 voyNumber_Entry.grid(column=2, row=1, sticky=(W, E))
 'voyage tonnage'
 voyTonCou = StringVar()
-voyTonCou_Entry = ttk.Entry(mainframe, width=10, textvariable=voyTonCou)
+voyTonCou_Entry = ttk.Entry(voyage_labelFrame, width=10, textvariable=voyTonCou)
 voyTonCou_Entry.grid(column=2, row=2, sticky=(W, E))
 'voyage draught'
 voyDraugh = StringVar()
-voyDraugh_Entry = ttk.Entry(mainframe, width=10, textvariable=voyDraugh)
+voyDraugh_Entry = ttk.Entry(voyage_labelFrame, width=10, textvariable=voyDraugh)
 voyDraugh_Entry.grid(column=4, row=1, sticky=(W, E))
 'voyage river level'
 voyPegKau = StringVar()
-voyPegKau_Entry = ttk.Entry(mainframe, width=10, textvariable=voyPegKau)
+voyPegKau_Entry = ttk.Entry(voyage_labelFrame, width=10, textvariable=voyPegKau)
 voyPegKau_Entry.grid(column=4, row=2, sticky=(W, E))
 
 
 ## sector table ##
 
 # table header
-ttk.Label(sector_labelFrame, text="Begin", width=10).grid(column=2, row=0, sticky=(W, E))
-ttk.Label(sector_labelFrame, text="Eind", width=10).grid(column=4, row=0, sticky=(W, E))
-ttk.Label(sector_labelFrame, text="Meten", width=5).grid(column=5, row=0, sticky=(W, E))
+ttk.Label(sector_labelFrame, text="Begin", width=10).grid(column=2, row=0, sticky=(W, E)) 
+ttk.Label(sector_labelFrame, text="Eind", width=10).grid(column=4, row=0, sticky=(W, E)) # Eind = end
+ttk.Label(sector_labelFrame, text="Meten", width=5).grid(column=5, row=0, sticky=(W, E)) # Meten = measures
 
-#Sector 1
+#Sector 1 Lobith - Duisburg
 'fixed'
 ttk.Label(sector_labelFrame, text="Kmr 855 (Lobith)").grid(column=1, row=1, sticky=(W, E))
 ttk.Label(sector_labelFrame, text="Kmr 777 (Duisburg)").grid(column=3, row=1, sticky=(W, E))
@@ -119,7 +130,7 @@ button_s1 = ttk.Button(sector_labelFrame, text="Start", command=lambda: \
 button_s1.grid(column=5, row=1, sticky=(W, E))
 button_list.append(button_s1)
 
-#Sector 2
+#Sector 2 Duisburg - Düsseldorf
 'fixed'
 ttk.Label(sector_labelFrame, text="Kmr 777 (Duisburg)").grid(column=1, row=2, sticky=(W, E))
 ttk.Label(sector_labelFrame, text="Kmr 742 (Düsseldorf)").grid(column=3, row=2, sticky=(W, E))
@@ -136,7 +147,7 @@ button_s2 = ttk.Button(sector_labelFrame, text="Start", command=lambda: \
 button_s2.grid(column=5, row=2, sticky=(W, E))
 button_list.append(button_s2)
 
-#Sector 3
+#Sector 3 Düsseldorf - Cologne
 'fixed'
 ttk.Label(sector_labelFrame, text="Kmr 742 (Düsseldorf)").grid(column=1, row=3, sticky=(W, E))
 ttk.Label(sector_labelFrame, text="Kmr 690 (Keulen)").grid(column=3, row=3, sticky=(W, E))
@@ -153,12 +164,12 @@ button_s3 = ttk.Button(sector_labelFrame, text="Start", command=lambda: \
 button_s3.grid(column=5, row=3, sticky=(W, E))
 button_list.append(button_s3)
 
-
-#numpad
-button_ALS = ttk.Button(numpad_labelFrame, text="ALS").grid(column=1, row=1, sticky=(W, E))
-button_RT = ttk.Button(numpad_labelFrame, text="RT").grid(column=2, row=1, sticky=(W, E))
-button_T = ttk.Button(numpad_labelFrame, text="T").grid(column=1, row=2, sticky=(W, E))
-button_B = ttk.Button(numpad_labelFrame, text="B").grid(column=2, row=2, sticky=(W, E))
+#numpad buttons (voyage number examples: ALS2102T, 1RT2114T, 2RT2114B, ALS2103B)
+button_ALS = ttk.Button(numpad_labelFrame, text="ALS").grid(column=1, row=1, sticky=(W, E)) #first 3 characters for a voyage towards or from Antwerp
+button_RT = ttk.Button(numpad_labelFrame, text="RT").grid(column=2, row=1, sticky=(W, E))   #first 2 characters for a voyage towards or from Rotterdam
+button_DEL = ttk.Button(numpad_labelFrame, text="DEL").grid(column=3, row=1, sticky=(W, E)) #To remove mistakes
+button_T = ttk.Button(numpad_labelFrame, text="T").grid(column=1, row=2, sticky=(W, E))     #Last character in voyage number for designating a trip towards the ocean
+button_B = ttk.Button(numpad_labelFrame, text="B").grid(column=2, row=2, sticky=(W, E))     #Last character in voyage number for designating a trip towards Basel, CH
 button_0 = ttk.Button(numpad_labelFrame, text="0").grid(column=2, row=6, sticky=(W, E))
 button_1 = ttk.Button(numpad_labelFrame, text="1").grid(column=1, row=5, sticky=(W, E))
 button_2 = ttk.Button(numpad_labelFrame, text="2").grid(column=2, row=5, sticky=(W, E))
@@ -175,8 +186,6 @@ for child in mainframe.winfo_children():
     child.grid_configure(padx=3, pady=1)
 voyNumber_Entry.focus()
 
-#pressing enter does:
-'root.bind("<Return>", selectNext)'
 
 
 root.mainloop()
