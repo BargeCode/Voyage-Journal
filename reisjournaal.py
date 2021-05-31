@@ -15,12 +15,9 @@ No clue what that does.
 
 '''
 
-#numpad
-#save to CSV
-
 def startStopSwitch(buttonName, distance, stamp1, stamp2):
     global start_time_var
-    global button_list
+    global start_stop_button_list
     
     if buttonName['text'] == "Start" and stamp1['text'] == "":
         start_time_var = time.time() #save start time
@@ -42,18 +39,32 @@ def calculateSpeed(start_time, distance):
     return speed
 
 def disableOtherButtons(active_button):
-    for i in button_list:
+    for i in start_stop_button_list:
         if i is not active_button:
             i['state'] = DISABLED
 
 def enableOtherButtons(active_button):
-    for i in button_list:
+    for i in start_stop_button_list:
         if i is not active_button and i['text'] == "Start":
-            i['state'] = ACTIVE
+            i['state'] = NORMAL
+
+def enableVoyButtons(event):
+    for i in special_character_butt_ls:
+        i['state'] = NORMAL
+
+def disableVoyButtons(event):
+    for i in special_character_butt_ls:
+        i['state'] = DISABLED
+
+def buttonPress(button_pressd):
+    print(button_pressd['text'])
         
 ### global variables ###
 start_time_var = 0
-button_list = []
+start_stop_button_list = []
+special_character_butt_ls = []
+allNumpad_character_ls = []
+
 
 # Main application window
 root = Tk()
@@ -79,11 +90,16 @@ numpad_labelFrame = ttk.Labelframe(mainframe, text='Toetsen') # Toetsen = Button
 numpad_labelFrame.grid(column=6, row=0, rowspan=6)
 
 # Mainframe text
-ttk.Label(voyage_labelFrame, text="Reisnummer #").grid(column=1, row=1, sticky=(W, E)) # Reisnummer = Voyage Number
-ttk.Label(voyage_labelFrame, text="Tonnage").grid(column=1, row=2, sticky=(W, E)) # Tonnage = Net Weight
-ttk.Label(voyage_labelFrame, text="Diepgang").grid(column=3, row=1, sticky=(W, E)) # Diepgang = Draught
-ttk.Label(voyage_labelFrame, text="Pegel Kaub").grid(column=3, row=2, sticky=(W, E)) # Pegel Kaub = River level at the town called Kaub
-ttk.Label(voyage_labelFrame, text="Gemiddelde snelheid:").grid(column=5, row=1, sticky=(W, E)) # Gemiddelde snelheid = Average speed
+ttk.Label(voyage_labelFrame, text="Reisnummer #").grid(column=1, row=1, sticky=(W, E))
+                                    # Reisnummer = Voyage Number
+ttk.Label(voyage_labelFrame, text="Tonnage").grid(column=1, row=2, sticky=(W, E))
+                                    # Tonnage = Net Weight
+ttk.Label(voyage_labelFrame, text="Diepgang").grid(column=3, row=1, sticky=(W, E))
+                                    # Diepgang = Draught
+ttk.Label(voyage_labelFrame, text="Pegel Kaub").grid(column=3, row=2, sticky=(W, E))
+                                    # Pegel Kaub = River level at the town called Kaub
+ttk.Label(voyage_labelFrame, text="Gemiddelde snelheid:").grid(column=5, row=1, sticky=(W, E))
+                                    # Gemiddelde snelheid = Average speed
 average_voyage_speed = ttk.Label(voyage_labelFrame, text="speed")
 average_voyage_speed.grid(column=6, row=1, sticky=(W, E))
 
@@ -128,7 +144,7 @@ sector1_size = 78
 button_s1 = ttk.Button(sector_labelFrame, text="Start", command=lambda: \
                        startStopSwitch(button_s1, sector1_size, time_stampS1, time_stampE1))
 button_s1.grid(column=5, row=1, sticky=(W, E))
-button_list.append(button_s1)
+start_stop_button_list.append(button_s1)
 
 #Sector 2 Duisburg - Düsseldorf
 'fixed'
@@ -145,7 +161,7 @@ sector2_size = 35
 button_s2 = ttk.Button(sector_labelFrame, text="Start", command=lambda: \
                        startStopSwitch(button_s2, sector2_size, time_stampS2, time_stampE2))
 button_s2.grid(column=5, row=2, sticky=(W, E))
-button_list.append(button_s2)
+start_stop_button_list.append(button_s2)
 
 #Sector 3 Düsseldorf - Cologne
 'fixed'
@@ -162,30 +178,87 @@ sector3_size = 52
 button_s3 = ttk.Button(sector_labelFrame, text="Start", command=lambda: \
                        startStopSwitch(button_s3, sector3_size, time_stampS3, time_stampE3))
 button_s3.grid(column=5, row=3, sticky=(W, E))
-button_list.append(button_s3)
+start_stop_button_list.append(button_s3)
 
-#numpad buttons (voyage number examples: ALS2102T, 1RT2114T, 2RT2114B, ALS2103B)
-button_ALS = ttk.Button(numpad_labelFrame, text="ALS").grid(column=1, row=1, sticky=(W, E)) #first 3 characters for a voyage towards or from Antwerp
-button_RT = ttk.Button(numpad_labelFrame, text="RT").grid(column=2, row=1, sticky=(W, E))   #first 2 characters for a voyage towards or from Rotterdam
-button_DEL = ttk.Button(numpad_labelFrame, text="DEL").grid(column=3, row=1, sticky=(W, E)) #To remove mistakes
-button_T = ttk.Button(numpad_labelFrame, text="T").grid(column=1, row=2, sticky=(W, E))     #Last character in voyage number for designating a trip towards the ocean
-button_B = ttk.Button(numpad_labelFrame, text="B").grid(column=2, row=2, sticky=(W, E))     #Last character in voyage number for designating a trip towards Basel, CH
-button_0 = ttk.Button(numpad_labelFrame, text="0").grid(column=2, row=6, sticky=(W, E))
-button_1 = ttk.Button(numpad_labelFrame, text="1").grid(column=1, row=5, sticky=(W, E))
-button_2 = ttk.Button(numpad_labelFrame, text="2").grid(column=2, row=5, sticky=(W, E))
-button_3 = ttk.Button(numpad_labelFrame, text="3").grid(column=3, row=5, sticky=(W, E))
-button_4 = ttk.Button(numpad_labelFrame, text="4").grid(column=1, row=4, sticky=(W, E))
-button_5 = ttk.Button(numpad_labelFrame, text="5").grid(column=2, row=4, sticky=(W, E))
-button_6 = ttk.Button(numpad_labelFrame, text="6").grid(column=3, row=4, sticky=(W, E))
-button_7 = ttk.Button(numpad_labelFrame, text="7").grid(column=1, row=3, sticky=(W, E))
-button_8 = ttk.Button(numpad_labelFrame, text="8").grid(column=2, row=3, sticky=(W, E))
-button_9 = ttk.Button(numpad_labelFrame, text="9").grid(column=3, row=3, sticky=(W, E))
+### numpad buttons (voyage number examples: ALS2102T, 1RT2114T, 2RT2114B, ALS2103B) ###
+
+#first 3 characters for a voyage towards or from Antwerp
+button_ALS = ttk.Button(numpad_labelFrame, text="ALS", state=DISABLED \
+                        , command=lambda: buttonPress(button_ALS))
+button_ALS.grid(column=1, row=1, sticky=(W, E))
+special_character_butt_ls.append(button_ALS)
+#first 2 characters for a voyage towards or from Rotterdam
+button_RT = ttk.Button(numpad_labelFrame, text="RT", state=DISABLED \
+                       , command=lambda: buttonPress(button_RT))
+button_RT.grid(column=2, row=1, sticky=(W, E))
+special_character_butt_ls.append(button_RT)
+#Last character in voyage number for designating a trip towards the ocean
+button_T = ttk.Button(numpad_labelFrame, text="T", state=DISABLED \
+                      , command=lambda: buttonPress(button_T))
+button_T.grid(column=1, row=2, sticky=(W, E))
+special_character_butt_ls.append(button_T)
+#Last character in voyage number for designating a trip towards Basel, CH
+button_B = ttk.Button(numpad_labelFrame, text="B", state=DISABLED \
+                      , command=lambda: buttonPress(button_B))
+button_B.grid(column=2, row=2, sticky=(W, E))
+special_character_butt_ls.append(button_B)
+#auto calculate voyage number ( YYWW )
+button_YYWW = ttk.Button(numpad_labelFrame, text="Reis#", state=DISABLED)
+button_YYWW.grid(column=3, row=1, sticky=(W, E))
+special_character_butt_ls.append(button_YYWW)
+
+#To remove mistakes
+button_DEL = ttk.Button(numpad_labelFrame, text="DEL")
+button_DEL.grid(column=3, row=2, sticky=(W, E))
+
+button_0 = ttk.Button(numpad_labelFrame, text="0", \
+                      command=lambda: buttonPress(button_0))
+button_0.grid(column=2, row=6, sticky=(W, E))
+allNumpad_character_ls.append(button_0)
+button_1 = ttk.Button(numpad_labelFrame, text="1", \
+                      command=lambda: buttonPress(button_1))
+button_1.grid(column=1, row=5, sticky=(W, E))
+allNumpad_character_ls.append(button_1)
+button_2 = ttk.Button(numpad_labelFrame, text="2", \
+                      command=lambda: buttonPress(button_2))
+button_2.grid(column=2, row=5, sticky=(W, E))
+allNumpad_character_ls.append(button_2)
+button_3 = ttk.Button(numpad_labelFrame, text="3", \
+                      command=lambda: buttonPress(button_3))
+button_3.grid(column=3, row=5, sticky=(W, E))
+allNumpad_character_ls.append(button_3)
+button_4 = ttk.Button(numpad_labelFrame, text="4", \
+                      command=lambda: buttonPress(button_4))
+button_4.grid(column=1, row=4, sticky=(W, E))
+allNumpad_character_ls.append(button_4)
+button_5 = ttk.Button(numpad_labelFrame, text="5", \
+                      command=lambda: buttonPress(button_5))
+button_5.grid(column=2, row=4, sticky=(W, E))
+allNumpad_character_ls.append(button_5)
+button_6 = ttk.Button(numpad_labelFrame, text="6", \
+                      command=lambda: buttonPress(button_6))
+button_6.grid(column=3, row=4, sticky=(W, E))
+allNumpad_character_ls.append(button_6)
+button_7 = ttk.Button(numpad_labelFrame, text="7", \
+                      command=lambda: buttonPress(button_7))
+button_7.grid(column=1, row=3, sticky=(W, E))
+allNumpad_character_ls.append(button_7)
+button_8 = ttk.Button(numpad_labelFrame, text="8", \
+                      command=lambda: buttonPress(button_8))
+button_8.grid(column=2, row=3, sticky=(W, E))
+allNumpad_character_ls.append(button_8)
+button_9 = ttk.Button(numpad_labelFrame, text="9", \
+                      command=lambda: buttonPress(button_9))
+button_9.grid(column=3, row=3, sticky=(W, E))
+allNumpad_character_ls.append(button_9)
+
 
 # padding
 for child in mainframe.winfo_children():
     child.grid_configure(padx=3, pady=1)
 voyNumber_Entry.focus()
 
-
+voyNumber_Entry.bind("<FocusIn>", enableVoyButtons)
+voyNumber_Entry.bind("<FocusOut>", disableVoyButtons)
 
 root.mainloop()
