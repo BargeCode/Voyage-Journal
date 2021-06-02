@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 import time
 import datetime
-
+import statistics
 '''
 version 1.1.1
 
@@ -18,45 +18,50 @@ No clue what that does.
 
 def start_stop_switch(button_name, distance, stamp1, stamp2):
     global start_time_var
-    global start_stop_button_list
+    global start_stop_button_ls
     if button_name['text'] == "Start" and stamp1['text'] == "":
         start_time_var = time.time()  # save start time
         stamp1['text'] = time.strftime('%H:%M %d-%m-%Y')  # show start time
         button_name['text'] = "Stop"
-        disableOtherButtons(button_name)
+        disable_other_buttons(button_name)
     elif button_name['text'] == "Stop" and not stamp1['text'] == "":
         stamp2['text'] = time.strftime('%H:%M %d-%m-%Y')  # show stop tome
-        speed = calculateSpeed(start_time_var, distance)
-        button_name['text'] = speed + " Km/h"  # show speed
+        speed = calculate_speed(start_time_var, distance)
+        button_name['text'] = speed + " Km/h"  # Show speed
         button_name['state'] = DISABLED
-        enableOtherButtons(button_name)
+        enable_other_buttons(button_name)
 
 
-def calculateSpeed(start_time, distance):
+def calculate_speed(start_time, distance):
     time_passed = time.time() - start_time_var
-    time_passed = time_passed / 60 / 60  # turn seconds into hours (not sure)
-    speed = "{:.2f}".format(distance/time_passed)  # distance/hrs set format
+    time_passed = time_passed / 60 / 60  # Turn seconds into hours (not sure)
+    speed = "{:.2f}".format(distance/time_passed)  # Distance/hrs set format
+    average_speed_ls.append(float(speed))
+    if len(average_speed_ls) != "":  # Adding avg speed for each sector to ls.
+        overal_average = statistics.mean(average_speed_ls)
+        average_voyage_speed['text'] = "{:.2f}".format(overal_average)\
+            + " Km/h"
     return speed
 
 
-def disableOtherButtons(active_button):
-    for i in start_stop_button_list:
+def disable_other_buttons(active_button):
+    for i in start_stop_button_ls:
         if i is not active_button:
             i['state'] = DISABLED
 
 
-def enableOtherButtons(active_button):
-    for i in start_stop_button_list:
+def enable_other_buttons(active_button):
+    for i in start_stop_button_ls:
         if i is not active_button and i['text'] == "Start":
             i['state'] = NORMAL
 
 
-def enableVoyButtons(event):
+def enable_voy_buttons(event):
     for i in special_character_butt_ls:
         i['state'] = NORMAL
 
 
-def disableVoyButtons(event):
+def disable_voy_buttons(event):
     for i in special_character_butt_ls:
         i['state'] = DISABLED
 
@@ -76,9 +81,10 @@ def button_press(button_pressd):
 
 # global variables
 start_time_var = 0
-start_stop_button_list = []
+start_stop_button_ls = []
 special_character_butt_ls = []
-allNumpad_character_ls = []
+all_numpad_character_ls = []
+average_speed_ls = []
 
 
 # Main application window
@@ -108,45 +114,51 @@ numpad_labelFrame = ttk.Labelframe(mainframe, text='Toetsen')
 numpad_labelFrame.grid(column=6, row=0, rowspan=6)
 
 # Mainframe text
+'Reisnummer = Voyage Number'
 ttk.Label(voyage_labelFrame, text="Reisnummer #").grid(column=1, row=1,
                                                        sticky=(W, E))
-'Reisnummer = Voyage Number'
+
+'Tonnage = Net Weight'
 ttk.Label(voyage_labelFrame, text="Tonnage").grid(column=1, row=2,
                                                   sticky=(W, E))
-'Tonnage = Net Weight'
+
+'Diepgang = Draught'
 ttk.Label(voyage_labelFrame, text="Diepgang").grid(column=3, row=1,
                                                    sticky=(W, E))
-'Diepgang = Draught'
+
+'Pegel Kaub = River level at the town called Kaub'
 ttk.Label(voyage_labelFrame, text="Pegel Kaub").grid(column=3, row=2,
                                                      sticky=(W, E))
-'Pegel Kaub = River level at the town called Kaub'
+
+'Gemiddelde snelheid = Average speed'
 ttk.Label(voyage_labelFrame, text="Gemiddelde snelheid:").grid(column=5, row=1,
                                                                sticky=(W, E))
-'Gemiddelde snelheid = Average speed'
-average_voyage_speed = ttk.Label(voyage_labelFrame, text="speed")
+
+average_voyage_speed = ttk.Label(voyage_labelFrame, text="")
 average_voyage_speed.grid(column=6, row=1, sticky=(W, E))
+
 
 # textboxes
 'voyage number'
-voyNumber = StringVar()
-voyNumber_Entry = ttk.Entry(voyage_labelFrame, width=10,
-                            textvariable=voyNumber)
-voyNumber_Entry.grid(column=2, row=1, sticky=(W, E))
+voy_number = StringVar()
+voy_number_entry = ttk.Entry(voyage_labelFrame, width=10,
+                             textvariable=voy_number)
+voy_number_entry.grid(column=2, row=1, sticky=(W, E))
 'voyage tonnage'
-voyTonCou = StringVar()
-voyTonCou_Entry = ttk.Entry(voyage_labelFrame, width=10,
-                            textvariable=voyTonCou)
-voyTonCou_Entry.grid(column=2, row=2, sticky=(W, E))
+voy_ton_cou = StringVar()
+voy_ton_cou_entry = ttk.Entry(voyage_labelFrame, width=10,
+                              textvariable=voy_ton_cou)
+voy_ton_cou_entry.grid(column=2, row=2, sticky=(W, E))
 'voyage draught'
-voyDraugh = StringVar()
-voyDraugh_Entry = ttk.Entry(voyage_labelFrame, width=10,
-                            textvariable=voyDraugh)
-voyDraugh_Entry.grid(column=4, row=1, sticky=(W, E))
+voy_draugh = StringVar()
+voy_draugh_entry = ttk.Entry(voyage_labelFrame, width=10,
+                             textvariable=voy_draugh)
+voy_draugh_entry.grid(column=4, row=1, sticky=(W, E))
 'voyage river level'
-voyPegKau = StringVar()
-voyPegKau_Entry = ttk.Entry(voyage_labelFrame, width=10,
-                            textvariable=voyPegKau)
-voyPegKau_Entry.grid(column=4, row=2, sticky=(W, E))
+voy_peg_kau = StringVar()
+voy_peg_kau_entry = ttk.Entry(voyage_labelFrame, width=10,
+                              textvariable=voy_peg_kau)
+voy_peg_kau_entry.grid(column=4, row=2, sticky=(W, E))
 
 
 # sector table ##
@@ -178,7 +190,7 @@ button_s1 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                        start_stop_switch(button_s1, sector1_size, time_stampS1,
                                          time_stampE1))
 button_s1.grid(column=5, row=1, sticky=(W, E))
-start_stop_button_list.append(button_s1)
+start_stop_button_ls.append(button_s1)
 
 # Sector 2 Duisburg - Düsseldorf
 'fixed'
@@ -198,7 +210,7 @@ button_s2 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                        start_stop_switch(button_s2, sector2_size, time_stampS2,
                                          time_stampE2))
 button_s2.grid(column=5, row=2, sticky=(W, E))
-start_stop_button_list.append(button_s2)
+start_stop_button_ls.append(button_s2)
 
 # Sector 3 Düsseldorf - Cologne
 'fixed'
@@ -218,7 +230,7 @@ button_s3 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                        start_stop_switch(button_s3, sector3_size, time_stampS3,
                                          time_stampE3))
 button_s3.grid(column=5, row=3, sticky=(W, E))
-start_stop_button_list.append(button_s3)
+start_stop_button_ls.append(button_s3)
 
 
 # Numpad buttons (voyage number examples: ALS2102T, 1RT2114T, 2RT2114B)
@@ -267,61 +279,61 @@ button_DEL.grid(column=3, row=2, sticky=(W, E))
 button_0 = ttk.Button(numpad_labelFrame, text="0",
                       takefocus=False, command=lambda: button_press(button_0))
 button_0.grid(column=2, row=6, sticky=(W, E))
-allNumpad_character_ls.append(button_0)
+all_numpad_character_ls.append(button_0)
 
 button_1 = ttk.Button(numpad_labelFrame, text="1",
                       takefocus=False, command=lambda: button_press(button_1))
 button_1.grid(column=1, row=5, sticky=(W, E))
-allNumpad_character_ls.append(button_1)
+all_numpad_character_ls.append(button_1)
 
 button_2 = ttk.Button(numpad_labelFrame, text="2",
                       takefocus=False, command=lambda: button_press(button_2))
 button_2.grid(column=2, row=5, sticky=(W, E))
-allNumpad_character_ls.append(button_2)
+all_numpad_character_ls.append(button_2)
 
 button_3 = ttk.Button(numpad_labelFrame, text="3",
                       takefocus=False, command=lambda: button_press(button_3))
 button_3.grid(column=3, row=5, sticky=(W, E))
-allNumpad_character_ls.append(button_3)
+all_numpad_character_ls.append(button_3)
 
 button_4 = ttk.Button(numpad_labelFrame, text="4",
                       takefocus=False, command=lambda: button_press(button_4))
 button_4.grid(column=1, row=4, sticky=(W, E))
-allNumpad_character_ls.append(button_4)
+all_numpad_character_ls.append(button_4)
 
 button_5 = ttk.Button(numpad_labelFrame, text="5",
                       takefocus=False, command=lambda: button_press(button_5))
 button_5.grid(column=2, row=4, sticky=(W, E))
-allNumpad_character_ls.append(button_5)
+all_numpad_character_ls.append(button_5)
 
 button_6 = ttk.Button(numpad_labelFrame, text="6",
                       takefocus=False, command=lambda: button_press(button_6))
 button_6.grid(column=3, row=4, sticky=(W, E))
-allNumpad_character_ls.append(button_6)
+all_numpad_character_ls.append(button_6)
 
 button_7 = ttk.Button(numpad_labelFrame, text="7",
                       takefocus=False, command=lambda: button_press(button_7))
 button_7.grid(column=1, row=3, sticky=(W, E))
-allNumpad_character_ls.append(button_7)
+all_numpad_character_ls.append(button_7)
 
 button_8 = ttk.Button(numpad_labelFrame, text="8",
                       takefocus=False, command=lambda: button_press(button_8))
 button_8.grid(column=2, row=3, sticky=(W, E))
-allNumpad_character_ls.append(button_8)
+all_numpad_character_ls.append(button_8)
 
 button_9 = ttk.Button(numpad_labelFrame, text="9",
                       takefocus=False, command=lambda: button_press(button_9))
 button_9.grid(column=3, row=3, sticky=(W, E))
-allNumpad_character_ls.append(button_9)
+all_numpad_character_ls.append(button_9)
 
 
 # padding
 for child in mainframe.winfo_children():
     child.grid_configure(padx=3, pady=1)
 
-voyNumber_Entry.focus()
+voy_number_entry.focus()
 
-voyNumber_Entry.bind("<FocusIn>", enableVoyButtons)
-voyNumber_Entry.bind("<FocusOut>", disableVoyButtons)
+voy_number_entry.bind("<FocusIn>", enable_voy_buttons)
+voy_number_entry.bind("<FocusOut>", disable_voy_buttons)
 
 root.mainloop()
