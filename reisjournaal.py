@@ -79,17 +79,47 @@ def button_press(button_pressd):
         entry.insert("end", button_pressd['text'])
 
 
+def save_voyage(entry_list):
+    voyage_save_file = open(voy_number_entry.get() + ".txt", "w+")
+    data_ls = compile_save_file(entry_list)
+    for i in data_ls:
+        voyage_save_file.write(str(i) + " , ")
+    voyage_save_file.close()
+
+
+def compile_save_file(entry_list):
+    result_list = []
+    x = 0
+    for i in average_speed_ls:
+        for j in entry_list:
+            result_list.append(str(j.get()))  # entry's
+        result_list.append(str(i))  # speed
+        result_list.append(sector_ls[x])  # sector
+        x = x + 1
+    print(result_list)
+    return result_list
+
+
+def key_bind(event):
+    global all_entry_ls
+    save_voyage(all_entry_ls)
+
+
 # global variables
 start_time_var = 0
+sector = 0
 start_stop_button_ls = []
 special_character_butt_ls = []
 all_numpad_character_ls = []
 average_speed_ls = []
-
+sector_ls = []
+all_entry_ls = []
+data_ls = []
 
 # Main application window
 root = Tk()
 root.title("Journaal")
+
 
 # Main Frame
 mainframe = ttk.Frame(root, padding="3 3 12 12")
@@ -97,6 +127,7 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 root.columnconfigure(0, weight=1, minsize=5)
 root.rowconfigure(0, weight=1, minsize=5)
 root.minsize(width=800, height=450)
+
 
 # voyage details frame
 voyage_labelFrame = ttk.Labelframe(mainframe, text='Reis gegevens')
@@ -144,21 +175,45 @@ voy_number = StringVar()
 voy_number_entry = ttk.Entry(voyage_labelFrame, width=10,
                              textvariable=voy_number)
 voy_number_entry.grid(column=2, row=1, sticky=(W, E))
+all_entry_ls.append(voy_number_entry)
 'voyage tonnage'
 voy_ton_cou = StringVar()
 voy_ton_cou_entry = ttk.Entry(voyage_labelFrame, width=10,
                               textvariable=voy_ton_cou)
 voy_ton_cou_entry.grid(column=2, row=2, sticky=(W, E))
+all_entry_ls.append(voy_ton_cou_entry)
 'voyage draught'
 voy_draugh = StringVar()
 voy_draugh_entry = ttk.Entry(voyage_labelFrame, width=10,
                              textvariable=voy_draugh)
 voy_draugh_entry.grid(column=4, row=1, sticky=(W, E))
+all_entry_ls.append(voy_draugh_entry)
 'voyage river level'
 voy_peg_kau = StringVar()
 voy_peg_kau_entry = ttk.Entry(voyage_labelFrame, width=10,
                               textvariable=voy_peg_kau)
 voy_peg_kau_entry.grid(column=4, row=2, sticky=(W, E))
+all_entry_ls.append(voy_peg_kau_entry)
+
+# Menu-buttons.
+opties = Menu(root)
+root.config(menu=opties)
+menu1 = Menu(opties)
+opties.add_cascade(label="Bestand", menu=menu1)
+menu1.add_command(label="Opslaan", command=lambda: save_voyage(all_entry_ls),
+                  accelerator="Cmd+S")
+menu1.add_command(label="Openen")
+
+menu2 = Menu(opties)
+opties.add_cascade(label="Knutselen", menu=menu2)
+menu2.add_command(label="Knippen")
+menu2.add_command(label="Plakken")
+
+menu3 = Menu(opties)
+opties.add_cascade(label="Keuze maken", menu=menu3)
+menu3.add_command(label="Gaan")
+menu3.add_separator()
+menu3.add_command(label="Niet gaan")
 
 
 # sector table ##
@@ -191,6 +246,7 @@ button_s1 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                                          time_stampE1))
 button_s1.grid(column=5, row=1, sticky=(W, E))
 start_stop_button_ls.append(button_s1)
+sector_ls.append(1)
 
 # Sector 2 Duisburg - Düsseldorf
 'fixed'
@@ -211,6 +267,7 @@ button_s2 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                                          time_stampE2))
 button_s2.grid(column=5, row=2, sticky=(W, E))
 start_stop_button_ls.append(button_s2)
+sector_ls.append(2)
 
 # Sector 3 Düsseldorf - Cologne
 'fixed'
@@ -231,6 +288,7 @@ button_s3 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                                          time_stampE3))
 button_s3.grid(column=5, row=3, sticky=(W, E))
 start_stop_button_ls.append(button_s3)
+sector_ls.append(3)
 
 
 # Numpad buttons (voyage number examples: ALS2102T, 1RT2114T, 2RT2114B)
@@ -335,5 +393,6 @@ voy_number_entry.focus()
 
 voy_number_entry.bind("<FocusIn>", enable_voy_buttons)
 voy_number_entry.bind("<FocusOut>", disable_voy_buttons)
+root.bind("<Command-s>", key_bind)
 
 root.mainloop()
