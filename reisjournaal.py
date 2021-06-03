@@ -10,7 +10,8 @@ additional info:
 Some dutch words are translated
 Kmr ### are the mile-markers, kilometer-markers along the river Rhine
 
-be kind, keep it simple because im not ready for __INIT__ stuff.
+be kind, keep it simple because ive got no idea for __INIT__ stuff
+does.
 No clue what that does.
 
 '''
@@ -80,10 +81,10 @@ def button_press(button_pressd):
 
 
 def save_voyage(entry_list):
-    voyage_save_file = open(voy_number_entry.get() + ".txt", "w+")
+    voyage_save_file = open("voyage logs" + ".csv", "a")
     data_ls = compile_save_file(entry_list)
     for i in data_ls:
-        voyage_save_file.write(str(i) + " , ")
+        voyage_save_file.write(str(i))
     voyage_save_file.close()
 
 
@@ -92,11 +93,13 @@ def compile_save_file(entry_list):
     x = 0
     for i in average_speed_ls:
         for j in entry_list:
-            result_list.append(str(j.get()))  # entry's
+            result_list.append(str(j.get()))
+            result_list.append(" , ")  # entry's
         result_list.append(str(i))  # speed
+        result_list.append(" , ")
         result_list.append(sector_ls[x])  # sector
+        result_list.append("\n")  # new line
         x = x + 1
-    print(result_list)
     return result_list
 
 
@@ -137,12 +140,12 @@ voyage_labelFrame.grid(column=0, row=0, columnspan=6, rowspan=2)
 # speed table frame
 sector_labelFrame = ttk.Labelframe(mainframe, text='Rivier gedeelten')
 'Rivier gedeelten = River sectors'
-sector_labelFrame.grid(column=0, row=4, columnspan=5)
+sector_labelFrame.grid(column=0, row=7, columnspan=7)
 
 # numpad frame
 numpad_labelFrame = ttk.Labelframe(mainframe, text='Toetsen')
 'Toetsen = Buttons'
-numpad_labelFrame.grid(column=6, row=0, rowspan=6)
+numpad_labelFrame.grid(column=6, row=0, rowspan=7)
 
 # Mainframe text
 'Reisnummer = Voyage Number'
@@ -166,7 +169,7 @@ ttk.Label(voyage_labelFrame, text="Gemiddelde snelheid:").grid(column=5, row=1,
                                                                sticky=(W, E))
 
 average_voyage_speed = ttk.Label(voyage_labelFrame, text="")
-average_voyage_speed.grid(column=6, row=1, sticky=(W, E))
+average_voyage_speed.grid(column=5, row=2, sticky=(W, E))
 
 
 # textboxes
@@ -219,12 +222,12 @@ menu3.add_command(label="Niet gaan")
 # sector table ##
 
 # table header
-ttk.Label(sector_labelFrame, text="Begin", width=10).grid(column=2, row=0,
-                                                          sticky=(W, E))
-ttk.Label(sector_labelFrame, text="Eind", width=10).grid(column=4, row=0,
-                                                         sticky=(W, E))
-ttk.Label(sector_labelFrame, text="Meten", width=5).grid(column=5, row=0,
-                                                         sticky=(W, E))
+ttk.Label(sector_labelFrame, text="Begin",
+          width=10).grid(column=2, row=0, columnspan=1, sticky=(W, E))
+ttk.Label(sector_labelFrame, text="Eind",
+          width=10).grid(column=4, row=0, columnspan=1, sticky=(W, E))
+ttk.Label(sector_labelFrame, text="Meten",
+          width=5).grid(column=5, row=0, sticky=(W, E))
 'Meten = measures'
 
 # Sector 1 Lobith - Duisburg
