@@ -129,23 +129,25 @@ mainframe = ttk.Frame(root, padding="3 3 12 12")
 mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 root.columnconfigure(0, weight=1, minsize=5)
 root.rowconfigure(0, weight=1, minsize=5)
-root.minsize(width=800, height=450)
+root.minsize(width=795, height=410)
+root.maxsize(width=795, height=410)
 
 
 # voyage details frame
 voyage_labelFrame = ttk.Labelframe(mainframe, text='Reis gegevens')
 'Reis gegevens = Voyage Details'
-voyage_labelFrame.grid(column=0, row=0, columnspan=6, rowspan=2)
+voyage_labelFrame.grid(column=0, row=0, columnspan=6, rowspan=2, sticky=(N, E))
 
 # speed table frame
 sector_labelFrame = ttk.Labelframe(mainframe, text='Rivier gedeelten')
 'Rivier gedeelten = River sectors'
-sector_labelFrame.grid(column=0, row=7, columnspan=7)
+sector_labelFrame.grid(column=0, row=7, columnspan=9, sticky=(W))
+sector_labelFrame.configure(borderwidth=3, relief=SUNKEN)
 
 # numpad frame
 numpad_labelFrame = ttk.Labelframe(mainframe, text='Toetsen')
 'Toetsen = Buttons'
-numpad_labelFrame.grid(column=6, row=0, rowspan=7)
+numpad_labelFrame.grid(column=6, row=0, rowspan=7, sticky=(N, E))
 
 # Mainframe text
 'Reisnummer = Voyage Number'
@@ -219,77 +221,93 @@ menu3.add_separator()
 menu3.add_command(label="Niet gaan")
 
 
-# sector table ##
+# sector table #
 
 # table header
-ttk.Label(sector_labelFrame, text="Begin",
-          width=10).grid(column=2, row=0, columnspan=1, sticky=(W, E))
-ttk.Label(sector_labelFrame, text="Eind",
-          width=10).grid(column=4, row=0, columnspan=1, sticky=(W, E))
-ttk.Label(sector_labelFrame, text="Meten",
-          width=5).grid(column=5, row=0, sticky=(W, E))
-'Meten = measures'
+ttk.Label(sector_labelFrame, text="Begin", anchor=(CENTER),
+          width=15).grid(column=0, row=0, columnspan=3, sticky=(W, E))
+ttk.Label(sector_labelFrame, text="Eind", anchor=(CENTER),
+          width=15).grid(column=5, row=0, columnspan=3, sticky=(W, E))
+ttk.Label(sector_labelFrame, text="Meten", anchor=(CENTER),
+          width=15).grid(column=8, row=0, sticky=(W, E))
+'Meten = measuring'
+
+
+# table header separators.
+ttk.Separator(sector_labelFrame,
+              orient=VERTICAL).grid(column=1, rowspan=4, row=1,
+                                    sticky="N, S")
+ttk.Separator(sector_labelFrame,
+              orient=VERTICAL).grid(column=6, rowspan=4, row=1,
+                                    sticky="N, S")
+ttk.Separator(sector_labelFrame,
+              orient=VERTICAL).grid(column=4, rowspan=5, row=0,
+                                    sticky="N, S")
+ttk.Separator(sector_labelFrame,
+              orient=HORIZONTAL).grid(column=0, row=1, columnspan=9,
+                                      sticky="E, W")
+
 
 # Sector 1 Lobith - Duisburg
 'fixed'
-ttk.Label(sector_labelFrame, text="Kmr 855 (Lobith)").grid(column=1, row=1,
+ttk.Label(sector_labelFrame, text="Kmr 855 (Lobith)").grid(column=0, row=2,
                                                            sticky=(W, E))
-ttk.Label(sector_labelFrame, text="Kmr 777 (Duisburg)").grid(column=3, row=1,
+ttk.Label(sector_labelFrame, text="Kmr 777 (Duisburg)").grid(column=5, row=2,
                                                              sticky=(W, E))
 'results'
-time_stampS1 = ttk.Label(sector_labelFrame, text="")
-time_stampS1.grid(column=2, row=1, sticky=(W, E))
-time_stampE1 = ttk.Label(sector_labelFrame, text="")
-time_stampE1.grid(column=4, row=1, sticky=(W, E))
+time_stampS1 = ttk.Label(sector_labelFrame, text="", width=15)
+time_stampS1.grid(column=2, row=2, sticky=(W, E))
+time_stampE1 = ttk.Label(sector_labelFrame, text="", width=15)
+time_stampE1.grid(column=7, row=2, sticky=(W, E))
 'var'
 sector1_size = 78
 'button'
 button_s1 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                        start_stop_switch(button_s1, sector1_size, time_stampS1,
                                          time_stampE1))
-button_s1.grid(column=5, row=1, sticky=(W, E))
+button_s1.grid(column=8, row=2, sticky=(W, E))
 start_stop_button_ls.append(button_s1)
 sector_ls.append(1)
 
 # Sector 2 Duisburg - Düsseldorf
 'fixed'
-ttk.Label(sector_labelFrame, text="Kmr 777 (Duisburg)").grid(column=1, row=2,
+ttk.Label(sector_labelFrame, text="Kmr 777 (Duisburg)").grid(column=0, row=3,
                                                              sticky=(W, E))
-ttk.Label(sector_labelFrame, text="Kmr 742 (Düsseldorf)").grid(column=3, row=2,
+ttk.Label(sector_labelFrame, text="Kmr 742 (Düsseldorf)").grid(column=5, row=3,
                                                                sticky=(W, E))
 'results'
 time_stampS2 = ttk.Label(sector_labelFrame, text="")
-time_stampS2.grid(column=2, row=2, sticky=(W, E))
+time_stampS2.grid(column=2, row=3, sticky=(W, E))
 time_stampE2 = ttk.Label(sector_labelFrame, text="")
-time_stampE2.grid(column=4, row=2, sticky=(W, E))
+time_stampE2.grid(column=7, row=3, sticky=(W, E))
 'var'
 sector2_size = 35
 'button'
 button_s2 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                        start_stop_switch(button_s2, sector2_size, time_stampS2,
                                          time_stampE2))
-button_s2.grid(column=5, row=2, sticky=(W, E))
+button_s2.grid(column=8, row=3, sticky=(W, E))
 start_stop_button_ls.append(button_s2)
 sector_ls.append(2)
 
 # Sector 3 Düsseldorf - Cologne
 'fixed'
-ttk.Label(sector_labelFrame, text="Kmr 742 (Düsseldorf)").grid(column=1, row=3,
+ttk.Label(sector_labelFrame, text="Kmr 742 (Düsseldorf)").grid(column=0, row=4,
                                                                sticky=(W, E))
-ttk.Label(sector_labelFrame, text="Kmr 690 (Keulen)").grid(column=3, row=3,
+ttk.Label(sector_labelFrame, text="Kmr 690 (Keulen)").grid(column=5, row=4,
                                                            sticky=(W, E))
 'results'
 time_stampS3 = ttk.Label(sector_labelFrame, text="")
-time_stampS3.grid(column=2, row=3, sticky=(W, E))
+time_stampS3.grid(column=2, row=4, sticky=(W, E))
 time_stampE3 = ttk.Label(sector_labelFrame, text="")
-time_stampE3.grid(column=4, row=3, sticky=(W, E))
+time_stampE3.grid(column=7, row=4, sticky=(W, E))
 'var'
 sector3_size = 52
 'button'
 button_s3 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                        start_stop_switch(button_s3, sector3_size, time_stampS3,
                                          time_stampE3))
-button_s3.grid(column=5, row=3, sticky=(W, E))
+button_s3.grid(column=8, row=4, sticky=(W, E))
 start_stop_button_ls.append(button_s3)
 sector_ls.append(3)
 
