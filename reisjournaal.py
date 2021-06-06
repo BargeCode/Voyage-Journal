@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 import time
 import datetime
 import statistics
@@ -17,7 +18,7 @@ No clue what that does.
 '''
 
 
-def start_stop_switch(button_name, distance, stamp1, stamp2):
+def start_stop_switch(button_name, distance, stamp1, stamp2, sector, entry):
     global start_time_var
     global start_stop_button_ls
     if button_name['text'] == "Start" and stamp1['text'] == "":
@@ -26,11 +27,17 @@ def start_stop_switch(button_name, distance, stamp1, stamp2):
         button_name['text'] = "Stop"
         disable_other_buttons(button_name)
     elif button_name['text'] == "Stop" and not stamp1['text'] == "":
-        stamp2['text'] = time.strftime('%H:%M %d-%m-%Y')  # show stop tome
-        speed = calculate_speed(start_time_var, distance)
-        button_name['text'] = speed + " Km/h"  # Show speed
-        button_name['state'] = DISABLED
-        enable_other_buttons(button_name)
+        if len(entry.get()) != 0:
+            stamp2['text'] = time.strftime('%H:%M %d-%m-%Y')  # show stop tome
+            speed = calculate_speed(start_time_var, distance)
+            button_name['text'] = speed + " Km/h"  # Show speed
+            button_name['state'] = DISABLED
+            enable_other_buttons(button_name)
+            sector_ls.append(sector)
+            sector_rpm_ls.append(entry.get())
+            entry['state'] = DISABLED
+        else:
+            messagebox.showerror("UH-OH", "Geen toeren ingevuld")
 
 
 def calculate_speed(start_time, distance):
@@ -90,16 +97,17 @@ def save_voyage(entry_list):
 
 def compile_save_file(entry_list):
     result_list = []
-    x = 0
     for i in average_speed_ls:
         for j in entry_list:
             result_list.append(str(j.get()))
-            result_list.append(" , ")  # entry's
+            result_list.append(", ")  # entry's
         result_list.append(str(i))  # speed
-        result_list.append(" , ")
-        result_list.append(sector_ls[x])  # sector
-        result_list.append("\n")  # new line
-        x = x + 1
+        result_list.append(", ")
+        index = average_speed_ls.index(i)
+        result_list.append(sector_rpm_ls[index])
+        result_list.append(", ")
+        result_list.append(sector_ls[index])
+        result_list.append(",\n")  # new line
     return result_list
 
 
@@ -118,6 +126,7 @@ average_speed_ls = []
 sector_ls = []
 all_entry_ls = []
 data_ls = []
+sector_rpm_ls = []
 
 # Main application window
 root = Tk()
@@ -141,8 +150,8 @@ voyage_labelFrame.grid(column=0, row=0, columnspan=6, rowspan=2, sticky=(N, E))
 # speed table frame
 sector_labelFrame = ttk.Labelframe(mainframe, text='Rivier gedeelten')
 'Rivier gedeelten = River sectors'
-sector_labelFrame.grid(column=0, row=7, columnspan=9, sticky=(W))
-sector_labelFrame.configure(borderwidth=3, relief=SUNKEN)
+sector_labelFrame.grid(column=0, row=7, columnspan=10, sticky=(W))
+sector_labelFrame.configure(borderwidth=2, relief=SUNKEN)
 
 # numpad frame
 numpad_labelFrame = ttk.Labelframe(mainframe, text='Toetsen')
@@ -229,8 +238,11 @@ ttk.Label(sector_labelFrame, text="Begin", anchor=(CENTER),
 ttk.Label(sector_labelFrame, text="Eind", anchor=(CENTER),
           width=15).grid(column=5, row=0, columnspan=3, sticky=(W, E))
 ttk.Label(sector_labelFrame, text="Meten", anchor=(CENTER),
-          width=15).grid(column=8, row=0, sticky=(W, E))
+          width=15).grid(column=9, row=0, sticky=(W, E))
 'Meten = measuring'
+ttk.Label(sector_labelFrame, text="Toeren", anchor=(CENTER),
+          width=6).grid(column=8, row=0, sticky=(W, E))
+"Toeren = RPM's "
 
 
 # table header separators.
@@ -244,7 +256,7 @@ ttk.Separator(sector_labelFrame,
               orient=VERTICAL).grid(column=4, rowspan=5, row=0,
                                     sticky="N, S")
 ttk.Separator(sector_labelFrame,
-              orient=HORIZONTAL).grid(column=0, row=1, columnspan=9,
+              orient=HORIZONTAL).grid(column=0, row=1, columnspan=10,
                                       sticky="E, W")
 
 
@@ -264,10 +276,14 @@ sector1_size = 78
 'button'
 button_s1 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                        start_stop_switch(button_s1, sector1_size, time_stampS1,
-                                         time_stampE1))
-button_s1.grid(column=8, row=2, sticky=(W, E))
+                                         time_stampE1, 1, sector1_rpm_entry))
+button_s1.grid(column=9, row=2, sticky=(W, E))
 start_stop_button_ls.append(button_s1)
-sector_ls.append(1)
+"rpm's"
+sector1_rpm = StringVar
+sector1_rpm_entry = ttk.Entry(sector_labelFrame, textvariable=sector1_rpm,
+                              width=5)
+sector1_rpm_entry.grid(column=8, row=2, sticky=(W, E))
 
 # Sector 2 Duisburg - Düsseldorf
 'fixed'
@@ -285,10 +301,13 @@ sector2_size = 35
 'button'
 button_s2 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                        start_stop_switch(button_s2, sector2_size, time_stampS2,
-                                         time_stampE2))
-button_s2.grid(column=8, row=3, sticky=(W, E))
+                                         time_stampE2, 2, sector2_rpm_entry))
+button_s2.grid(column=9, row=3, sticky=(W, E))
 start_stop_button_ls.append(button_s2)
-sector_ls.append(2)
+sector2_rpm = StringVar
+sector2_rpm_entry = ttk.Entry(sector_labelFrame, textvariable=sector2_rpm,
+                              width=5)
+sector2_rpm_entry.grid(column=8, row=3, sticky=(W, E))
 
 # Sector 3 Düsseldorf - Cologne
 'fixed'
@@ -306,10 +325,14 @@ sector3_size = 52
 'button'
 button_s3 = ttk.Button(sector_labelFrame, text="Start", command=lambda:
                        start_stop_switch(button_s3, sector3_size, time_stampS3,
-                                         time_stampE3))
-button_s3.grid(column=8, row=4, sticky=(W, E))
+                                         time_stampE3, 3, sector3_rpm_entry))
+button_s3.grid(column=9, row=4, sticky=(W, E))
 start_stop_button_ls.append(button_s3)
-sector_ls.append(3)
+"rpm's"
+sector3_rpm = StringVar
+sector3_rpm_entry = ttk.Entry(sector_labelFrame, textvariable=sector3_rpm,
+                              width=5)
+sector3_rpm_entry.grid(column=8, row=4, sticky=(W, E))
 
 
 # Numpad buttons (voyage number examples: ALS2102T, 1RT2114T, 2RT2114B)
