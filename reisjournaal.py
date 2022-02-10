@@ -75,7 +75,7 @@ def disable_voy_buttons(event):
 
 
 def button_press(button_pressd):
-    entry = root.focus_get()
+    entry = root.focus_get()  # to see which box was active
     if button_pressd['text'] == "DEL":
         entry.delete(0, END)
     elif button_pressd['text'] == "Reis#":
